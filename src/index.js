@@ -282,7 +282,6 @@ window.requestAnimationFrame = function requestAnimationFrame() { };
 require("./bdms");
 require("./sdk-glue");
 require("./secsdk-runtime");
-require("./initial-vendors");
 
 window.bdms.init(bdms_init_params);
 
