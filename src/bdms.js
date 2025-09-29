@@ -10493,6 +10493,7 @@ window.bdms || function () {
             }
             r.p = null,
                 function e(r, t, n, a, f) {
+                    typeof a[8] === "string" ? window.log("abogus::", a[8]) : null;
                     var o, s, u, l, b, d = -1, p = [], h = [0, null], v = null, g = [t];
                     for (s = Math.min(t.length, n),
                         u = 0; u < s; ++u)
@@ -10536,7 +10537,7 @@ window.bdms || function () {
                                             r += 2,
                                             s = c[o],
                                             // [Complete]
-                                            // typeof p[d] === "undefined" && s === "apply" ? p[d] = { apply: function () { } } : null,
+                                            typeof p[d] === "undefined" && s === "apply" ? p[d] = { apply: function () { } } : null,
                                             p[d] = p[d][s]) : (s = p[d--],
                                                 p[d] = p[d][s]);
                                 else if (y < 29)

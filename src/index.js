@@ -1,7 +1,7 @@
 // =========== class difinetion ===========
 
-const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-const Image = require("canvas");
+class XMLHttpRequest { }
+class Image { }
 class LocalStorage {
     constructor(storageKey = "localStorage") {
         this._storage = {};
@@ -73,6 +73,8 @@ class LocalStorage {
     }
 }
 
+class SessionStorage { }
+
 class Document {
     cookie() { }
 }
@@ -84,8 +86,10 @@ class HTMLImageElement {
 // =========== create instance ===========
 
 const window = global;
+const self = window;
 const xhr = new XMLHttpRequest();
 const localStorage = new LocalStorage();
+const sessionStorage = new SessionStorage();
 const document = new Document();
 const location = {};
 const navigator = {};
@@ -127,6 +131,8 @@ const fonts = {
     };
 }).call(global);
 
+console_info = console.info
+
 // =========== assignment ===========
 
 window.addEventListener = function () { };
@@ -156,6 +162,7 @@ window.screen = {
         angle: 0,
     }
 }
+window.log = console_info
 
 location.host = "cn";
 // location.href = "https://jimeng.jianying.com/mweb/v1/get_explore?aid=513695&web_version=7.5.0&da_version=3.3.2&aigc_features=app_lip_sync";
@@ -170,6 +177,118 @@ document.fonts = fonts;
 navigator.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
 navigator.sendBeacon = function () { };
 navigator.platform = "Win32";
+
+bdms_init_params = {
+    aid: 513695,
+    pageId: 28324,
+    paths: [
+        "/mweb/v1/generate",
+        "/mweb/v1/super_resolution",
+        "/mweb/v1/painting",
+        "/mweb/v1/aigc_draft/generate",
+        "/mweb/v1/normal_hd",
+        "/mweb/v1/doodle",
+        "/mweb/v1/batch_generate_video",
+        "/mweb/v1/mixblend",
+        "/mweb/v1/fusion",
+        "/mweb/v1/creation_agent/v2/conversation",
+        "/commerce/v1/subscription/make_unauto_order",
+        "/commerce/v1/benefits/credit_receive",
+        "/commerce/v1/purchase/make_order",
+        "/commerce/v3/trade/init_trade",
+        "/commerce/v2/subscription/sign_and_pay",
+        "/mweb/v1/get_explore",
+        "/mweb/v1/feed_short_video",
+        "/mweb/v1/feed",
+        "/mweb/v1/get_homepage",
+        "/mweb/v1/get_weekly_challenge_work_list",
+        "/mweb/v1/mget_item_info",
+        "/mweb/v1/get_item_info",
+        "/mweb/v1/get_history_by_ids",
+        "/mweb/v1/get_history",
+        "/mweb/search/v1/search",
+        "/lv/v1/user/update",
+        "/mweb/v1/publish",
+        "competition/v1/submit_artwork",
+        "/mweb/v1/mark_favorite",
+        "/mweb/v1/follow"
+    ],
+    track: {
+        "mode": 2
+    }
+}
+
+// =========== globalize ===========
+
+global.window = window;
+global.self = self;
+global.XMLHttpRequest = XMLHttpRequest;
+global.Image = Image;
+global.xhr = xhr;
+global.localStorage = localStorage;
+global.sessionStorage = sessionStorage;
+global.document = document;
+global.location = location;
+global.navigator = navigator;
+global.Document = Document;
+global.HTMLImageElement = HTMLImageElement;
+
+// =========== env proxy ===========
+
+function get_environment(proxy_array) {
+    proxy_array.forEach(function (variableName) {
+        try {
+            var globalObj = typeof window !== 'undefined' ? window : global;
+            var targetObj = globalObj[variableName] || {};
+
+            // 使用闭包保存variableName
+            var handler = createHandler(variableName);
+
+            globalObj[variableName] = new Proxy(targetObj, handler);
+
+        } catch (e) {
+            console.error('处理对象 ' + variableName + ' 时出错:', e);
+        }
+    });
+
+    function createHandler(name) {
+        return {
+            get: function (target, property, receiver) {
+                console.log("方法:", "get  ", "对象:", name,
+                    "  属性:", property,
+                    "  属性类型:", typeof property,
+                    "  属性值类型:", typeof target[property]);
+                return Reflect.get(target, property, receiver);
+            },
+            set: function (target, property, value, receiver) {
+                console.log("方法:", "set  ", "对象:", name,
+                    "  属性:", property,
+                    "  属性类型:", typeof property,
+                    "  属性值类型:", typeof target[property],
+                    "  新值:", value);
+                return Reflect.set(target, property, value, receiver);
+            }
+        };
+    }
+};
+proxy_array = ['window', 'document', 'location', 'navigator', 'history', 'localStorage', 'sessionStorage']
+// get_environment(proxy_array);  // 调试时运行代理
+
+window.requestAnimationFrame = function requestAnimationFrame() { };
+
+// =========== ready ===========
+
+// require("./home");
+require("./bdms");
+require("./sdk-glue");
+require("./secsdk-runtime");
+require("./initial-vendors");
+
+window.bdms.init(bdms_init_params);
+
+// =========== execution ===========
+
+xhr.open("POST", "https://jimeng.jianying.com/mweb/v1/get_explore?aid=513695&web_version=7.5.0&da_version=3.3.2&aigc_features=app_lip_sync", !0);
 
 xhr.bdmsInvokeList = [
     {
@@ -279,113 +398,7 @@ xhr._xhr_open_args = {
     "isAsync": true
 };
 
-bdms_init_params = {
-    aid: 513695,
-    pageId: 28324,
-    paths: [
-        "/mweb/v1/generate",
-        "/mweb/v1/super_resolution",
-        "/mweb/v1/painting",
-        "/mweb/v1/aigc_draft/generate",
-        "/mweb/v1/normal_hd",
-        "/mweb/v1/doodle",
-        "/mweb/v1/batch_generate_video",
-        "/mweb/v1/mixblend",
-        "/mweb/v1/fusion",
-        "/mweb/v1/creation_agent/v2/conversation",
-        "/commerce/v1/subscription/make_unauto_order",
-        "/commerce/v1/benefits/credit_receive",
-        "/commerce/v1/purchase/make_order",
-        "/commerce/v3/trade/init_trade",
-        "/commerce/v2/subscription/sign_and_pay",
-        "/mweb/v1/get_explore",
-        "/mweb/v1/feed_short_video",
-        "/mweb/v1/feed",
-        "/mweb/v1/get_homepage",
-        "/mweb/v1/get_weekly_challenge_work_list",
-        "/mweb/v1/mget_item_info",
-        "/mweb/v1/get_item_info",
-        "/mweb/v1/get_history_by_ids",
-        "/mweb/v1/get_history",
-        "/mweb/search/v1/search",
-        "/lv/v1/user/update",
-        "/mweb/v1/publish",
-        "competition/v1/submit_artwork",
-        "/mweb/v1/mark_favorite",
-        "/mweb/v1/follow"
-    ],
-    track: {
-        "mode": 2
-    }
-}
-
-// =========== globalize ===========
-
-global.window = window;
-global.XMLHttpRequest = XMLHttpRequest;
-global.Image = Image;
-global.xhr = xhr;
-global.localStorage = localStorage;
-global.document = document;
-global.location = location;
-global.navigator = navigator;
-global.Document = Document;
-global.HTMLImageElement = HTMLImageElement;
-
-// =========== env proxy ===========
-
-function get_environment(proxy_array) {
-    proxy_array.forEach(function (variableName) {
-        try {
-            var globalObj = typeof window !== 'undefined' ? window : global;
-            var targetObj = globalObj[variableName] || {};
-
-            // 使用闭包保存variableName
-            var handler = createHandler(variableName);
-
-            globalObj[variableName] = new Proxy(targetObj, handler);
-
-        } catch (e) {
-            console.error('处理对象 ' + variableName + ' 时出错:', e);
-        }
-    });
-
-    function createHandler(name) {
-        return {
-            get: function (target, property, receiver) {
-                console.log("方法:", "get  ", "对象:", name,
-                    "  属性:", property,
-                    "  属性类型:", typeof property,
-                    "  属性值类型:", typeof target[property]);
-                return Reflect.get(target, property, receiver);
-            },
-            set: function (target, property, value, receiver) {
-                console.log("方法:", "set  ", "对象:", name,
-                    "  属性:", property,
-                    "  属性类型:", typeof property,
-                    "  属性值类型:", typeof target[property],
-                    "  新值:", value);
-                return Reflect.set(target, property, value, receiver);
-            }
-        };
-    }
-};
-proxy_array = ['window', 'document', 'location', 'navigator', 'history', 'localStorage', 'sessionStorage']
-// get_environment(proxy_array);  // 调试时运行代理
-
-window.requestAnimationFrame = function requestAnimationFrame() { };
-
-// =========== execution ===========
-
-// require("./home");
-require("./bdms");
-require("./sdk-glue");
-require("./secsdk-runtime");
-
-window.bdms.init(bdms_init_params);
-
 params = '{"count":40,"filter":{"work_type_list":["video","image","canvas"]},"offset":0,"image_info":{"width":2048,"height":2048,"format":"webp","image_scene_list":[{"scene":"smart_crop","width":240,"height":240,"format":"webp","uniq_key":"smart_crop-w:240-h:240"},{"scene":"smart_crop","width":320,"height":320,"format":"webp","uniq_key":"smart_crop-w:320-h:320"},{"scene":"smart_crop","width":480,"height":480,"format":"webp","uniq_key":"smart_crop-w:480-h:480"},{"scene":"smart_crop","width":480,"height":320,"format":"webp","uniq_key":"smart_crop-w:480-h:320"},{"scene":"smart_crop","width":240,"height":160,"format":"webp","uniq_key":"smart_crop-w:240-h:160"},{"scene":"smart_crop","width":160,"height":213,"format":"webp","uniq_key":"smart_crop-w:160-h:213"},{"scene":"smart_crop","width":320,"height":427,"format":"webp","uniq_key":"smart_crop-w:320-h:427"},{"scene":"loss","width":1080,"height":1080,"format":"webp","uniq_key":"1080"},{"scene":"loss","width":900,"height":900,"format":"webp","uniq_key":"900"},{"scene":"loss","width":720,"height":720,"format":"webp","uniq_key":"720"},{"scene":"loss","width":480,"height":480,"format":"webp","uniq_key":"480"},{"scene":"loss","width":360,"height":360,"format":"webp","uniq_key":"360"},{"scene":"normal","width":2048,"height":2048,"format":"webp","uniq_key":"2048"}]},"category_id":11222,"feed_refer":"feed_loadmore"}';
 params_arr = [params];
 
-xhr.open("POST", "https://jimeng.jianying.com/mweb/v1/get_explore?aid=513695&web_version=7.5.0&da_version=3.3.2&aigc_features=app_lip_sync");
 xhr.send(params);
