@@ -1,5 +1,3 @@
-# Bdms-1.0.0.44 插桩补环境逆向
+# Bdms-vert
 
-a_bogus
-
-详细见 index.js
+Bdms-1.0.0.44 插桩补环境逆向
